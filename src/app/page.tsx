@@ -1,9 +1,9 @@
-import { TestForm } from '@/components/test-form'
+import { EditPatientForm } from '@/components/edit-patient-form'
 
 export default function Home() {
   return (
     <div>
-      <TestForm />
+      <EditPatientForm />
     </div>
   )
 }

@@ -68,3 +68,7 @@ export interface Article {
   subtitle?: string
   button_link?: string
 }
+
+export interface EntityObj {
+  [key: string]: unknown
+}

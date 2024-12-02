@@ -13,6 +13,7 @@ import {
   DoubleTextListValue,
   EditEntryEnum,
   EditEntryType,
+  EntityObj,
 } from '@/types'
 
 /**
@@ -28,17 +29,13 @@ import {
  * @returns {React.FC<EditFormProps>} Modular form accepting multiple input types.
  */
 
-interface EntityObj {
-  [key: string]: unknown
-}
-
 interface EditFormProps {
   title: string
   description: string
   buttonText?: string
-  editEntries: [EditEntryType]
+  editEntries: EditEntryType[]
   entityObj: unknown
-  onSubmitSuccess: (entity: EntityObj) => void
+  onSubmitSuccess?: (entity: EntityObj) => void
 }
 
 export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
@@ -59,15 +56,16 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
       const typedEntityObj = props.entityObj as EntityObj
       // Check if entry is an array field
       const isArrField =
-        (props.entityObj as EntityObj) &&
+        typedEntityObj &&
         (entry.type === EditEntryEnum.TextList ||
           entry.type === EditEntryEnum.DoubleTextList)
       // If is populated array and entity object has the entry attribute field key
       if (isArrField) {
-        const entryObjAttribute =
-          entry.attribute in typedEntityObj && typedEntityObj[entry.attribute]
+        const entryObjAttribute = typedEntityObj[entry.attribute] as
+          | string[]
+          | DoubleTextListValue[]
         const entryObjAttributeIsArr = Array.isArray(entryObjAttribute)
-        if (entryObjAttributeIsArr) return Object.keys(entryObjAttribute).length
+        if (entryObjAttributeIsArr) return entryObjAttribute.length
       }
       return 0
     })
@@ -86,9 +84,7 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
   }, [props.editEntries, props.entityObj])
 
   // Sets form checkbox field value from editEntries
-  const [checkboxFieldValue, setCheckboxFieldValue] = useState<
-    (boolean | null)[]
-  >([])
+  const [checkboxFieldValue, setCheckboxFieldValue] = useState<boolean[]>([])
   useEffect(() => {
     const currCheckboxFieldValue = props.editEntries.map((entry) => {
       const typedEntityObj = props.entityObj as EntityObj
@@ -96,7 +92,7 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
         typedEntityObj && entry.type === EditEntryEnum.Checkbox
       return isCheckboxField
         ? (typedEntityObj[entry.attribute] as boolean)
-        : null
+        : false
     })
     setCheckboxFieldValue(currCheckboxFieldValue)
   }, [props.editEntries, props.entityObj])
@@ -115,7 +111,7 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
             return
           }
 
-          // entityObj attributes to be updated
+          // entity attributes to be updated
           const updateTargets = new Set(
             props.editEntries.map((editEntry) => editEntry.attribute)
           )
@@ -137,10 +133,7 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
             if (updateTargets.has(target.name)) {
               // if target is radio button, only update if it is checked
               if (target.type === 'radio' && !target.checked) continue
-              setEntity((prevState: EntityObj) => ({
-                ...prevState,
-                [target.name]: target.value,
-              }))
+              typedEntityObj[target.name] = target.value
             }
 
             // TextLists
@@ -169,10 +162,7 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
 
                 // Set entityObj DoubleTextList attribute to empty array if not in entity
                 if (!typedEntityObj[entity_field]) {
-                  setEntity((prevState: EntityObj) => ({
-                    ...prevState,
-                    [entity_field]: [],
-                  }))
+                  typedEntityObj[entity_field] = []
                 }
 
                 // Set entityObj DoubleTextList attribute array index to empty array if doesn't exist
@@ -181,30 +171,24 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
                     entity_curr_idx
                   ]
                 ) {
-                  setEntity((prevState: EntityObj) => ({
-                    ...prevState,
-                    [entity_field]: (
-                      prevState[entity_field] as DoubleTextListValue[]
-                    ).map((value, idx) => {
-                      if (idx === entity_curr_idx) return []
-                      return value
-                    }),
-                  }))
+                  typedEntityObj[entity_field] = (
+                    typedEntityObj[entity_field] as DoubleTextListValue[]
+                  ).map((value, idx) => {
+                    if (idx === entity_curr_idx) return []
+                    return value
+                  })
                 }
 
                 // Set entityObj DoubleTextList attribute array index subarray index to target value
-                setEntity((prevState: EntityObj) => ({
-                  ...prevState,
-                  [entity_field]: (
-                    prevState[entity_field] as DoubleTextListValue[]
-                  ).map((value, idx) => {
-                    if (idx === entity_curr_idx) {
-                      value[entity_sub_sub_field] = target.value
-                      return value
-                    }
+                typedEntityObj[entity_field] = (
+                  typedEntityObj[entity_field] as DoubleTextListValue[]
+                ).map((value, idx) => {
+                  if (idx === entity_curr_idx) {
+                    value[entity_sub_sub_field] = target.value
                     return value
-                  }),
-                }))
+                  }
+                  return value
+                })
               }
 
               // TextList implementation
@@ -219,27 +203,11 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
 
                 // Set entityObj TextList attribute to empty array if not in entity
                 if (!typedEntityObj[entity_field]) {
-                  setEntity((prevState: EntityObj) => ({
-                    ...prevState,
-                    [entity_field]: [],
-                  }))
+                  typedEntityObj[entity_field] = []
                 }
 
-                setEntity((prevState: EntityObj) => ({
-                  ...prevState,
-                  [entity_field]: (prevState[entity_field] as string[]).map(
-                    (value, idx) => {
-                      if (idx === entity_curr_idx) return target.value
-                      return value
-                    }
-                  ),
-                }))
-
-                console.log(
-                  (entity as EntityObj)[entity_field],
-                  (entity as EntityObj)['badges'],
-                  entity
-                )
+                ;(typedEntityObj[entity_field] as string[])[entity_curr_idx] =
+                  target.value
               }
 
               // Article implementation
@@ -253,21 +221,15 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
                   (target.value.includes('\n') ||
                     (entity_sub_field === 'content' && target.value))
                 ) {
-                  setEntity((prevState: EntityObj) => ({
-                    ...prevState,
-                    [entity_field]: {
-                      entity_sub_field: target.value
-                        .split('\n')
-                        .filter((e) => !!e),
-                    },
-                  }))
+                  typedEntityObj[entity_field] = {
+                    entity_sub_field: target.value
+                      .split('\n')
+                      .filter((e) => !!e),
+                  }
                 } else {
-                  setEntity((prevState: EntityObj) => ({
-                    ...prevState,
-                    [entity_field]: {
-                      entity_sub_field: target.value,
-                    },
-                  }))
+                  typedEntityObj[entity_field] = {
+                    entity_sub_field: target.value,
+                  }
                 }
               }
             }
@@ -285,14 +247,11 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
               const editEntryIdx = props.editEntries.indexOf(editEntry)
 
               if (editEntryIdx > -1) {
-                setEntity((prevState: EntityObj) => ({
-                  ...prevState,
-                  [editEntry.attribute]: checkboxFieldValue[editEntryIdx],
-                }))
+                typedEntityObj[editEntry.attribute] =
+                  checkboxFieldValue[editEntryIdx]
               }
             }
 
-            // For Article fields
             if (editEntry.type === EditEntryEnum.Article) {
               const article = typedEntityObj[editEntry.attribute] as Article
 
@@ -326,41 +285,23 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
                 return
               }
               if (!article['title'] && !article['content']) {
-                setEntity((prevState: EntityObj) => ({
-                  ...prevState,
-                  [editEntry.attribute]: {},
-                }))
+                typedEntityObj[editEntry.attribute] = {}
               }
             }
 
-            // For TextList fields
-            // const max_idx_to_take =
-            //   listFieldSize[editEntryIdx[editEntry.attribute]]
-            // if (max_idx_to_take > 0) {
-            //   setEntity((prevState: EntityObj) => ({
-            //     ...prevState,
-            //     [editEntry.attribute]: Object.fromEntries(
-            //       Object.entries((entity as EntityObj)[editEntry.attribute]).filter(
-            //         ([k, v]) =>
-            //           parseInt(k, 10) < max_idx_to_take && v['0'] && v['1']
+            // if (editEntry.validations) {
+            //   for (const validation of editEntry.validations) {
+            //     if (
+            //       !validateValue(
+            //         (entity as EntityObj)[editEntry.attribute],
+            //         editEntry.attributeName,
+            //         validation
             //       )
-            //     ),
-            //   }))
+            //     ) {
+            //       return
+            //     }
+            //   }
             // }
-
-            if (editEntry.validations) {
-              for (const validation of editEntry.validations) {
-                if (
-                  !validateValue(
-                    (entity as EntityObj)[editEntry.attribute],
-                    editEntry.attributeName,
-                    validation
-                  )
-                ) {
-                  return
-                }
-              }
-            }
           }
 
           if (props.onSubmitSuccess) {
@@ -527,7 +468,7 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
                               : ''
 
                           return (
-                            <div key={editEntry.attribute} className="my-2">
+                            <div key={i} className="my-2">
                               <input
                                 id={
                                   editEntry.attribute +
