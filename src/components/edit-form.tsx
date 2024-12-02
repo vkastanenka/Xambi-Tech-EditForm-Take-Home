@@ -7,7 +7,6 @@ import { X } from 'lucide-react'
 import { classNames } from '@/lib/utils'
 import { useState, useEffect, useRef } from 'react'
 import { validateValue } from '@/validation'
-// import toast from 'react-hot-toast'
 
 // types
 import {
@@ -110,7 +109,7 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
 
           // Prevent submit and alert if no entity object or if no id
           if (!typedEntityObj || !typedEntityObj['id']) {
-            // toast.error("Unknown error.");
+            window.alert('Unknown error.')
             return
           }
 
@@ -241,7 +240,6 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
           for (const editEntry of props.editEntries) {
             if (editEntry.isRequired) {
               if (!typedEntityObj[editEntry.attribute]) {
-                // toast.error(`Field is required: "${editEntry.attributeName}"`)
                 return
               }
             }
@@ -280,11 +278,6 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
                   article['content'],
                   article['image_url']
                 )
-                // toast.error(
-                //   'Title, Content, and Photo are required for ' +
-                //     editEntry.attributeName +
-                //     '.'
-                // )
                 return
               }
               if (!article['title'] && !article['content']) {
@@ -292,25 +285,42 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
               }
             }
 
-            // if (editEntry.validations) {
-            //   for (const validation of editEntry.validations) {
-            //     if (
-            //       !validateValue(
-            //         (entity as EntityObj)[editEntry.attribute],
-            //         editEntry.attributeName,
-            //         validation
-            //       )
-            //     ) {
-            //       return
-            //     }
-            //   }
-            // }
+            if (editEntry.validations) {
+              if (editEntry.type === EditEntryEnum.TextList) {
+                for (const listItem of typedEntityObj[
+                  editEntry.attribute
+                ] as string[]) {
+                  for (const validation of editEntry.validations) {
+                    if (
+                      !validateValue(
+                        listItem,
+                        editEntry.attributeName,
+                        validation
+                      )
+                    ) {
+                      return
+                    }
+                  }
+                }
+              } else {
+                for (const validation of editEntry.validations) {
+                  if (
+                    !validateValue(
+                      (entity as EntityObj)[editEntry.attribute],
+                      editEntry.attributeName,
+                      validation
+                    )
+                  ) {
+                    return
+                  }
+                }
+              }
+            }
           }
 
           if (props.onSubmitSuccess) {
             try {
               props.onSubmitSuccess(entity as EntityObj)
-              // toast.success('Successfully submitted!')
             } catch (error) {
               console.log(error)
             }
@@ -1025,7 +1035,7 @@ const PillListInput: React.FC<PillListInput> = ({
         className="transition-colors p-1 border-[1px] rounded-md flex gap-1 items-center relative z-20 bg-white"
       >
         <button
-          className="text-blue-700 hover:bg-slate-100 focus:bg-slate-100"
+          className="text-blue-700 hover:bg-slate-100 focus:bg-slate-100 break-all text-left"
           onClick={(e) => {
             e.preventDefault()
             setIsEditing(true)
@@ -1057,7 +1067,7 @@ const PillListInput: React.FC<PillListInput> = ({
         id={editEntry.attribute + '_listfieldsingleidx_' + i}
         name={editEntry.attribute + '_listfieldsingleidx_' + i}
         type="text"
-        className="w-2 rounded-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 bg-transparent"
+        className="w-2 max-w-[300px] rounded-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 bg-transparent"
         defaultValue={typedEntityAttribute[i]}
         onBlur={(e) => {
           e.preventDefault()

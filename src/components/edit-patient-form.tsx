@@ -17,7 +17,7 @@ const editEntries = [
     attributeName: 'prescriptions',
     type: EditEntryEnum.TextList,
     isRequired: true,
-    validations: [ValidationEnum.TextLengthBelow200],
+    validations: [ValidationEnum.TextLengthBelow50],
   },
 ] as EditEntryType[]
 
@@ -25,11 +25,13 @@ const entity = {
   id: '1234-5678',
   name: 'Susan Person',
   age: '37',
-  prescriptions: ['protein', 'sulfur', 'omega-3']
+  prescriptions: ['protein', 'sulfur', 'omega-3'],
 }
 
 const onSubmitSuccess = (entity: EntityObj) => {
-  console.log(`Updated ${entity.name}'s prescription!`, entity)
+  window.alert(
+    `Updated ${entity.name}'s prescription!\n${entity.prescriptions}`
+  )
 }
 
 export const EditPatientForm = () => {

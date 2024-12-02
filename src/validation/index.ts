@@ -12,7 +12,7 @@ export const validateValue = (
         ((value as string).length > 100 ||
           !/\S+@\S+\.\S+/.test(value as string))
       ) {
-        // toast.error(`Error for "${attributeName}"\n\nEmail format is invalid.`)
+        window.alert(`Error for "${attributeName}"\n\nEmail format is invalid.`)
         return false
       }
       break
@@ -22,32 +22,32 @@ export const validateValue = (
         (!(value as string).match(/\d/g) ||
           ![10, 11].includes((value as string).match(/\d/g)?.length || 0))
       ) {
-        // toast.error(
-        //   `Error for "${attributeName}"\n\nPhone number format is invalid.`
-        // )
+        window.alert(
+          `Error for "${attributeName}"\n\nPhone number format is invalid.`
+        )
         return
       }
       break
     case ValidationEnum.UserName:
       if (typeof value === 'string' || value instanceof String) {
-        // toast.error('Invalid User name')
+        window.alert('Invalid User name')
         return false
       }
       if (!/^[a-z0-9_]+$/.test(value as string)) {
-        // toast.error('User name can only contain "a~z", number and "_".')
+        window.alert('User name can only contain "a~z", number and "_".')
         return false
       }
       break
     case ValidationEnum.CheckboxChecked:
       if (!value) {
-        // toast.error(`Error for "${attributeName}"\n\nPlease check the box.`)
+        window.alert(`Error for "${attributeName}"\n\nPlease check the box.`)
         return false
       }
       break
 
     case ValidationEnum.RequiredField:
       if (!value) {
-        // toast.error(attributeName + ' is required!')
+        window.alert(attributeName + ' is required!')
         return false
       }
       break
@@ -57,9 +57,9 @@ export const validateValue = (
         !(typeof value === 'string' || value instanceof String) ||
         value.length > 30
       ) {
-        // toast.error(
-        //   `Error for "${attributeName}"\n\nNeeds to be shorter than 30 characters`
-        // )
+        window.alert(
+          `Error for "${attributeName}"\n\nNeeds to be shorter than 30 characters`
+        )
         return false
       }
       break
@@ -69,9 +69,9 @@ export const validateValue = (
         !(typeof value === 'string' || value instanceof String) ||
         value.length > 50
       ) {
-        // toast.error(
-        //   `Error for "${attributeName}"\n\nNeeds to be shorter than 50 characters`
-        // )
+        window.alert(
+          `Error for "${attributeName}"\n\nNeeds to be shorter than 50 characters`
+        )
         return false
       }
       break
@@ -82,9 +82,9 @@ export const validateValue = (
         !(typeof value === 'string' || value instanceof String) ||
         value.length > 100
       ) {
-        // toast.error(
-        //   `Error for "${attributeName}"\n\nNeeds to be shorter than 100 characters`
-        // )
+        window.alert(
+          `Error for "${attributeName}"\n\nNeeds to be shorter than 100 characters`
+        )
         return false
       }
       break
@@ -94,9 +94,9 @@ export const validateValue = (
         !(typeof value === 'string' || value instanceof String) ||
         value.length > 200
       ) {
-        // toast.error(
-        //   `Error for "${attributeName}"\n\nNeeds to be shorter than 200 characters`
-        // )
+        window.alert(
+          `Error for "${attributeName}"\n\nNeeds to be shorter than 200 characters`
+        )
         return false
       }
       break
@@ -106,9 +106,9 @@ export const validateValue = (
         !(typeof value === 'string' || value instanceof String) ||
         value.length > 300
       ) {
-        // toast.error(
-        //   `Error for "${attributeName}"\n\nNeeds to be shorter than 300 characters`
-        // )
+        window.alert(
+          `Error for "${attributeName}"\n\nNeeds to be shorter than 300 characters`
+        )
         return false
       }
       break
@@ -118,9 +118,9 @@ export const validateValue = (
         !(typeof value === 'string' || value instanceof String) ||
         value.length > 400
       ) {
-        // toast.error(
-        //   `Error for "${attributeName}"\n\nNeeds to be shorter than 400 characters`
-        // )
+        window.alert(
+          `Error for "${attributeName}"\n\nNeeds to be shorter than 400 characters`
+        )
         return false
       }
       break
@@ -129,10 +129,10 @@ export const validateValue = (
         value &&
         ((value as string).length > 100 || !/^\d*\.?\d*$/.test(value as string))
       ) {
-        // toast.error(
-        //   attributeName +
-        //     ' is invalid. Please enter a valid number with only digits or a decimal.'
-        // )
+        window.alert(
+          attributeName +
+            ' is invalid. Please enter a valid number with only digits or a decimal.'
+        )
         return false
       }
       if (
@@ -140,17 +140,17 @@ export const validateValue = (
         (value as string).split('.')[1] &&
         (value as string).split('.')[1].length > 2
       ) {
-        // toast.error(
-        //   attributeName +
-        //     ' is invalid. Please enter a valid number with only digits or a decimal.'
-        // )
+        window.alert(
+          attributeName +
+            ' is invalid. Please enter a valid number with only digits or a decimal.'
+        )
         return false
       }
       const price = parseFloat(value as string)
       if (price <= 0 || price > 9999.0) {
-        // toast.error(
-        //   `Error for "${attributeName}"\n\nPlease enter a number between 0-9999`
-        // )
+        window.alert(
+          `Error for "${attributeName}"\n\nPlease enter a number between 0-9999`
+        )
         return false
       }
 
@@ -160,14 +160,14 @@ export const validateValue = (
         value &&
         ((value as string).length > 10 || !/^\d*\.?\d*$/.test(value as string))
       ) {
-        // toast.error(attributeName + ' is invalid. Please enter a valid number')
+        window.alert(attributeName + ' is invalid. Please enter a valid number')
         return false
       }
       const number = parseInt(value as string, 10)
       if (number <= 0 || number > 999.0) {
-        // toast.error(
-        //   `Error for "${attributeName}"\n\nPlease enter a number between 0-999`
-        // )
+        window.alert(
+          `Error for "${attributeName}"\n\nPlease enter a number between 0-999`
+        )
         return false
       }
       break
