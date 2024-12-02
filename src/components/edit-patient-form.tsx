@@ -25,6 +25,7 @@ const entity = {
   id: '1234-5678',
   name: 'Susan Person',
   age: '37',
+  prescriptions: ['protein', 'sulfur', 'omega-3']
 }
 
 const onSubmitSuccess = (entity: EntityObj) => {

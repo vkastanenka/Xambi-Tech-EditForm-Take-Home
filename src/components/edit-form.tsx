@@ -1,8 +1,11 @@
 'use client'
 
+// components
+import { X } from 'lucide-react'
+
 // utils
 import { classNames } from '@/lib/utils'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { validateValue } from '@/validation'
 // import toast from 'react-hot-toast'
 
@@ -434,91 +437,16 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
                   )
                 } else if (editEntry.type == EditEntryEnum.TextList) {
                   return (
-                    <div key={editEntry.attribute} className="col-span-6">
-                      <div className="relative py-5">
-                        <div
-                          className="absolute inset-0 flex items-center"
-                          aria-hidden="true"
-                        >
-                          <div className="w-full border-t border-gray-300" />
-                        </div>
-                      </div>
-                      <div className="col-span-6 pb-2">
-                        <h3 className="text-lg font-medium leading-6 text-gray-900">
-                          {editEntry.attributeName + requiredMark}
-                        </h3>
-                      </div>
-                      {Array.from(Array(listFieldSize[index]).keys()).map(
-                        (i) => {
-                          const defaultStringArrValue =
-                            entity &&
-                            ((entity as EntityObj)[
-                              editEntry.attribute
-                            ] as string[]) &&
-                            (
-                              (entity as EntityObj)[
-                                editEntry.attribute
-                              ] as string[]
-                            )[i]
-                              ? (
-                                  (entity as EntityObj)[
-                                    editEntry.attribute
-                                  ] as string[]
-                                )[i]
-                              : ''
-
-                          return (
-                            <div key={i} className="my-2">
-                              <input
-                                id={
-                                  editEntry.attribute +
-                                  '_listfieldsingleidx_' +
-                                  i
-                                }
-                                name={
-                                  editEntry.attribute +
-                                  '_listfieldsingleidx_' +
-                                  i
-                                }
-                                type="text"
-                                defaultValue={defaultStringArrValue}
-                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                              />
-                            </div>
-                          )
-                        }
-                      )}
-                      <div className="flex">
-                        <button
-                          type="button"
-                          className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                          onClick={() => {
-                            const newListFieldSize = [...listFieldSize]
-                            newListFieldSize[index] = Math.min(
-                              10,
-                              newListFieldSize[index] + 1
-                            )
-                            setListFieldSize(newListFieldSize)
-                          }}
-                        >
-                          Add
-                        </button>
-                        <button
-                          type="button"
-                          className="ml-3 rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                          onClick={() => {
-                            const newListFieldSize = [...listFieldSize]
-                            newListFieldSize[index] = Math.max(
-                              1,
-                              newListFieldSize[index] - 1
-                            )
-                            setListFieldSize(newListFieldSize)
-                          }}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
+                    <PillList
+                      key={editEntry.attribute}
+                      editEntry={editEntry}
+                      requiredMark={requiredMark}
+                      listFieldSize={listFieldSize}
+                      index={index}
+                      entity={entity}
+                      setListFieldSize={setListFieldSize}
+                      setEntity={setEntity}
+                    />
                   )
                 } else if (editEntry.type == EditEntryEnum.DoubleTextList) {
                   return (
@@ -967,6 +895,198 @@ export const EditForm: React.FC<EditFormProps> = (props: EditFormProps) => {
           </div>
         </div>
       </form>
+    </div>
+  )
+}
+
+interface PillList {
+  editEntry: EditEntryType
+  requiredMark: string
+  listFieldSize: number[]
+  index: number
+  setListFieldSize: React.Dispatch<React.SetStateAction<number[]>>
+  entity: unknown
+  setEntity: React.Dispatch<unknown>
+}
+
+const PillList: React.FC<PillList> = ({
+  editEntry,
+  requiredMark,
+  listFieldSize,
+  index,
+  setListFieldSize,
+  entity,
+  setEntity,
+}) => {
+  return (
+    <div key={editEntry.attribute} className="col-span-6">
+      <div className="relative py-5">
+        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+          <div className="w-full border-t border-gray-300" />
+        </div>
+      </div>
+      <div className="col-span-6 pb-2">
+        <h3 className="text-lg font-medium leading-6 text-gray-900">
+          {editEntry.attributeName + requiredMark}
+        </h3>
+      </div>
+      <div className="p-1 flex items-center flex-wrap gap-2 relative min-h-[42px]">
+        <button
+          className="absolute top-0 left-0 w-full h-full transition-colors border-[1px] rounded-md hover:border-blue-500 focus:border-blue-500"
+          onClick={(e) => {
+            e.preventDefault()
+            const newListFieldSize = [...listFieldSize]
+            newListFieldSize[index] = Math.min(10, newListFieldSize[index] + 1)
+            setListFieldSize(newListFieldSize)
+          }}
+        ></button>
+
+        {Array.from(Array(listFieldSize[index]).keys()).map((i) => {
+          const defaultValue =
+            (entity as EntityObj) &&
+            ((entity as EntityObj)[editEntry.attribute] as string[]) &&
+            ((entity as EntityObj)[editEntry.attribute] as string[])[i]
+              ? ((entity as EntityObj)[editEntry.attribute] as string[])[i]
+              : ''
+
+          return (
+            <PillListInput
+              key={i}
+              editEntry={editEntry}
+              i={i}
+              index={index}
+              listFieldSize={listFieldSize}
+              defaultValue={defaultValue}
+              setListFieldSize={setListFieldSize}
+              entity={entity}
+              setEntity={setEntity}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+interface PillListInput {
+  editEntry: EditEntryType
+  index: number
+  i: number
+  listFieldSize: number[]
+  defaultValue: string
+  setListFieldSize: React.Dispatch<React.SetStateAction<number[]>>
+  entity: unknown
+  setEntity: React.Dispatch<unknown>
+}
+
+const PillListInput: React.FC<PillListInput> = ({
+  editEntry,
+  index,
+  i,
+  listFieldSize,
+  defaultValue,
+  setListFieldSize,
+  entity,
+  setEntity,
+}) => {
+  const typedEntity = entity as EntityObj
+  const typedEntityAttribute = (entity as EntityObj)[
+    editEntry.attribute
+  ] as string[]
+
+  const spanEl = useRef<HTMLSpanElement>(null)
+  const inputEl = useRef<HTMLInputElement>(null)
+  const [isEditing, setIsEditing] = useState<boolean>(!defaultValue)
+
+  useEffect(() => {
+    const inputElCurrent = inputEl.current
+
+    const inputElCallback = (event: Event) => {
+      const el = event.target as HTMLInputElement
+      if (spanEl.current) {
+        spanEl.current.innerHTML = el.value
+        el.style.width = spanEl.current.offsetWidth + 'px'
+      }
+    }
+
+    if (inputElCurrent && spanEl.current) {
+      inputElCurrent.focus()
+      inputElCurrent.style.width = spanEl.current.offsetWidth + 'px'
+      inputElCurrent.addEventListener('input', inputElCallback)
+    }
+
+    return () => inputElCurrent?.removeEventListener('input', inputElCallback)
+  }, [isEditing])
+
+  if (!isEditing) {
+    return (
+      <div
+        key={i}
+        className="transition-colors p-1 border-[1px] rounded-md flex gap-1 items-center relative z-20 bg-white"
+      >
+        <button
+          className="text-blue-700 hover:bg-slate-100 focus:bg-slate-100"
+          onClick={(e) => {
+            e.preventDefault()
+            setIsEditing(true)
+          }}
+        >
+          {typedEntityAttribute[i]}
+        </button>
+        <button
+          className="text-slate-500 hover:text-blue-700 focus:text-blue-700"
+          onClick={(e) => {
+            e.preventDefault()
+            typedEntityAttribute.splice(i, 1)
+            const newListFieldSize = [...listFieldSize]
+            newListFieldSize[index] = Math.max(0, newListFieldSize[index] - 1)
+            setListFieldSize(newListFieldSize)
+            setEntity(typedEntity)
+          }}
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div key={i} className="p-1 border-[1px] rounded-md relative z-20 bg-white">
+      <input
+        ref={inputEl}
+        id={editEntry.attribute + '_listfieldsingleidx_' + i}
+        name={editEntry.attribute + '_listfieldsingleidx_' + i}
+        type="text"
+        className="w-2 rounded-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 bg-transparent"
+        defaultValue={typedEntityAttribute[i]}
+        onBlur={(e) => {
+          e.preventDefault()
+
+          // No input, remove from entity attribute
+          if (!e.target.value) {
+            const newListFieldSize = [...listFieldSize]
+            newListFieldSize[index] = Math.max(1, newListFieldSize[index] - 1)
+            setListFieldSize(newListFieldSize)
+            return
+          }
+
+          if (typedEntityAttribute[i]) {
+            typedEntityAttribute.splice(i, 1, e.target.value)
+          } else {
+            typedEntityAttribute.push(e.target.value)
+          }
+
+          setEntity(typedEntity)
+          setIsEditing(false)
+          return
+        }}
+      />
+      <span
+        ref={spanEl}
+        className="absolute -left-[9999px] inline-block min-w-2"
+      >
+        {typedEntityAttribute[i]}
+      </span>
     </div>
   )
 }
