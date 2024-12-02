@@ -7,7 +7,11 @@ export const validateValue = (
 ) => {
   switch (validationType) {
     case ValidationEnum.Email:
-      if (value && (value.length > 100 || !/\S+@\S+\.\S+/.test(value))) {
+      if (
+        value &&
+        ((value as string).length > 100 ||
+          !/\S+@\S+\.\S+/.test(value as string))
+      ) {
         // toast.error(`Error for "${attributeName}"\n\nEmail format is invalid.`)
         return false
       }
@@ -15,7 +19,8 @@ export const validateValue = (
     case ValidationEnum.PhoneNumber:
       if (
         value &&
-        (!value.match(/\d/g) || ![10, 11].includes(value.match(/\d/g).length))
+        (!(value as string).match(/\d/g) ||
+          ![10, 11].includes((value as string).match(/\d/g)?.length || 0))
       ) {
         // toast.error(
         //   `Error for "${attributeName}"\n\nPhone number format is invalid.`
@@ -28,7 +33,7 @@ export const validateValue = (
         // toast.error('Invalid User name')
         return false
       }
-      if (!/^[a-z0-9_]+$/.test(value)) {
+      if (!/^[a-z0-9_]+$/.test(value as string)) {
         // toast.error('User name can only contain "a~z", number and "_".')
         return false
       }
@@ -120,21 +125,28 @@ export const validateValue = (
       }
       break
     case ValidationEnum.Price:
-      if (value && (value.length > 100 || !/^\d*\.?\d*$/.test(value))) {
+      if (
+        value &&
+        ((value as string).length > 100 || !/^\d*\.?\d*$/.test(value as string))
+      ) {
         // toast.error(
         //   attributeName +
         //     ' is invalid. Please enter a valid number with only digits or a decimal.'
         // )
         return false
       }
-      if (value && value.split('.')[1] && value.split('.')[1].length > 2) {
+      if (
+        value &&
+        (value as string).split('.')[1] &&
+        (value as string).split('.')[1].length > 2
+      ) {
         // toast.error(
         //   attributeName +
         //     ' is invalid. Please enter a valid number with only digits or a decimal.'
         // )
         return false
       }
-      const price = parseFloat(value)
+      const price = parseFloat(value as string)
       if (price <= 0 || price > 9999.0) {
         // toast.error(
         //   `Error for "${attributeName}"\n\nPlease enter a number between 0-9999`
@@ -144,11 +156,14 @@ export const validateValue = (
 
       break
     case ValidationEnum.Number:
-      if (value && (value.length > 10 || !/^\d*\.?\d*$/.test(value))) {
+      if (
+        value &&
+        ((value as string).length > 10 || !/^\d*\.?\d*$/.test(value as string))
+      ) {
         // toast.error(attributeName + ' is invalid. Please enter a valid number')
         return false
       }
-      const number = parseInt(value, 10)
+      const number = parseInt(value as string, 10)
       if (number <= 0 || number > 999.0) {
         // toast.error(
         //   `Error for "${attributeName}"\n\nPlease enter a number between 0-999`
