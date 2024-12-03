@@ -1,20 +1,20 @@
 // form input types
 export enum EditEntryEnum {
-  Text = 'Text',
-  TextList = 'TextList',
-  DoubleTextList = 'DoubleTextList',
-  TextArea = 'TextArea',
-  File = 'File',
   Address = 'Address',
+  Article = 'Article',
+  Checkbox = 'Checkbox',
+  Date = 'Date',
+  DoubleTextList = 'DoubleTextList',
+  File = 'File',
+  FilePhoto = 'FilePhoto',
   Photo = 'Photo',
   ProfilePhoto = 'ProfilePhoto',
-  FilePhoto = 'FilePhoto',
   Radio = 'Radio',
-  Checkbox = 'Checkbox',
-  Article = 'Article',
-  Date = 'Date',
   Select = 'Select',
   Showcase = 'Showcase',
+  Text = 'Text',
+  TextArea = 'TextArea',
+  TextList = 'TextList',
 }
 
 // form input validation types
@@ -38,15 +38,15 @@ export enum ValidationEnum {
 export interface EditEntryType {
   attribute: string
   attributeName: string
-  subName?: string
-  info?: string
-  type: EditEntryEnum
-  isRequired: boolean
-  validations: ValidationEnum[]
-  extraParam: unknown
-  condition: unknown
-  options?: string[]
   characterCount?: number
+  condition: unknown
+  extraParam: unknown
+  info?: string
+  isRequired: boolean
+  options?: string[]
+  subName?: string
+  type: EditEntryEnum
+  validations: ValidationEnum[]
 }
 
 export interface AddressType {

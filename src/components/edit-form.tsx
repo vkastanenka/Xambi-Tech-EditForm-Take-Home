@@ -24,7 +24,7 @@ import {
  * @param {string} props.title - Form title.
  * @param {string} props.description - Form description.
  * @param {string} props.buttonText - Form button text.
- * @param {editEntries} props.editEntries[] - Variable form inputs.
+ * @param {editEntries} props.editEntries - Variable form inputs.
  * @param {unknown} props.entityObj - Model object form is updating.
  * @param {onSubmitSuccess} props.onSubmitSuccess - Form success callback.
 
