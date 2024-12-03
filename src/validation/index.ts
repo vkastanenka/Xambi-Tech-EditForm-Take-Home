@@ -1,3 +1,4 @@
+// types
 import { ValidationEnum } from '@/types'
 
 export const validateValue = (

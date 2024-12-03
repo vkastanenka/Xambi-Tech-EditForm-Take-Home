@@ -11,6 +11,7 @@ import {
   EntityObj,
 } from '@/types'
 
+// Hypothetical editEntries
 const editEntries = [
   {
     attribute: 'prescriptions',
@@ -21,6 +22,7 @@ const editEntries = [
   },
 ] as EditEntryType[]
 
+// Hypothetical entity
 const entity = {
   id: '1234-5678',
   name: 'Susan Person',
@@ -28,6 +30,7 @@ const entity = {
   prescriptions: ['Pill Label', 'Pill Label'],
 }
 
+// Hypothetical onSubmitSuccess
 const onSubmitSuccess = (entity: EntityObj) => {
   window.alert(
     `Updated ${entity.name}'s prescription!\n${entity.prescriptions}`
