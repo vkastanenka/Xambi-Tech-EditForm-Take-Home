@@ -187,7 +187,7 @@ const PillListInput: React.FC<PillListInput> = ({
           // No input value, decrease field size and remove input
           if (!e.target.value) {
             const newListFieldSize = [...listFieldSize]
-            newListFieldSize[index] = Math.max(1, newListFieldSize[index] - 1)
+            newListFieldSize[index] = Math.max(0, newListFieldSize[index] - 1)
             setListFieldSize(newListFieldSize)
             return
           }
